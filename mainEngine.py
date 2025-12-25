@@ -1,13 +1,12 @@
 import hashlib, binascii, os
-from datetime import date, datetime
 from app.models.client_model import Client
 
 class MainEngine:
-    def __init__(self):
-        self.createClientTable()
+    def __init__(self, connection):
+        self.createClientTable(connection)
         
-    def createClientTable(self):
-        with Client() as db:
+    def createClientTable(self, connection):
+        with Client(connection) as db:
             db.createClientTable()
 
     # def login(self, email, password):

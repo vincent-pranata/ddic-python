@@ -1,4 +1,4 @@
-class Client:
+class User:
     connection = None
     def __init__(self, connection): 
         self.connection = connection
@@ -15,39 +15,41 @@ class Client:
     def deleteTable(self):
         cursor = self.connection.cursor()
         cursor.execute("""
-            drop table if exists Clients
+            drop table if exists Users
                 """)
         self.connection.commit()
 
-    def createClientTable(self):
+    def createUserTable(self):
         cursor = self.connection.cursor()
         cursor.execute("""
-            create table if not exists Clients (
-                    client_id int not null auto_increment,
-                    name text not null,
-                    constraint PK_Client primary key (client_id)
+            create table if not exists Users (
+                    user_id int not null auto_increment,
+                    username text not null,
+                    password text not null,
+                    role text not null,
+                    constraint PK_User primary key (user_id)
                 )""")
         self.connection.commit()
 
-    def insertClient(self, name):
+    def insertUser(self, username, password, role):
         cursor = self.connection.cursor()
-        cursor.execute("insert into Clients (name) values (%s)", (name, ))
+        cursor.execute("insert into Users (username, password, role) values (%s)", (username, password, role, ))
             
         self.connection.commit()
 
         return cursor.rowcount == 1
 
-    def getAllClients(self):
+    def getAllUsers(self):
         cursor = self.connection.cursor()
-        cursor.execute("select * from Clients")
+        cursor.execute("select * from Users")
         return cursor.fetchall()
 
-    def getClientByName(self, name):
+    def getUserByName(self, username):
         cursor = self.connection.cursor()
-        cursor.execute("select * from Clients WHERE name like %s", (name,))
+        cursor.execute("select * from Users WHERE username like %s", (username,))
         return cursor.fetchall()
 
-    def deleteClient(self, client_id):
+    def deleteUser(self, user_id):
         cursor = self.connection.cursor()
-        cursor.execute("delete from Clients where client_id = %s", (client_id,))
+        cursor.execute("delete from Users where user_id = %s", (user_id,))
         self.connection.commit()
