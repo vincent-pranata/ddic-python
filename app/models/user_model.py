@@ -13,6 +13,7 @@ class User:
         self.close()
 
     def deleteTable(self):
+        self.connection.reconnect()
         cursor = self.connection.cursor()
         cursor.execute("""
             drop table if exists Users
@@ -20,6 +21,7 @@ class User:
         self.connection.commit()
 
     def createUserTable(self):
+        self.connection.reconnect()
         cursor = self.connection.cursor()
         cursor.execute("""
             create table if not exists Users (
@@ -32,24 +34,28 @@ class User:
         self.connection.commit()
 
     def insertUser(self, username, password, role):
+        self.connection.reconnect()
         cursor = self.connection.cursor()
-        cursor.execute("insert into Users (username, password, role) values (%s)", (username, password, role, ))
+        cursor.execute("insert into Users (username, password, role) values (%s,%s,%s)", (username, password, role, ))
             
         self.connection.commit()
 
         return cursor.rowcount == 1
 
     def getAllUsers(self):
+        self.connection.reconnect()
         cursor = self.connection.cursor()
-        cursor.execute("select * from Users")
+        cursor.execute("select user_id, username, role from Users")
         return cursor.fetchall()
 
     def getUserByName(self, username):
+        self.connection.reconnect()
         cursor = self.connection.cursor()
         cursor.execute("select * from Users WHERE username like %s", (username,))
         return cursor.fetchall()
 
     def deleteUser(self, user_id):
+        self.connection.reconnect()
         cursor = self.connection.cursor()
         cursor.execute("delete from Users where user_id = %s", (user_id,))
         self.connection.commit()

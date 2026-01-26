@@ -22,8 +22,8 @@ db_password = os.getenv('SQL_PASSWORD')
 db_name = os.getenv('DBNAME')
 db_connection_name = os.getenv('SQL_URL')
 connection = mysql.connector.connect(user=db_user, password=db_password,
-            host=db_connection_name, db=db_name)       
-
+            host=db_connection_name, db=db_name)
+            
 mainEngine = MainEngine(connection)
 
 # Load the views
