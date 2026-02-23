@@ -10,6 +10,7 @@ from schemas.recipe_schema import *
 from schemas.inventory_record_schema import *
 from schemas.inventory_schema import *
 from schemas.pre_order_schema import *
+from schemas.work_order_schema import *
 
 # Import Services
 from services.user_service import *
@@ -18,6 +19,7 @@ from services.recipe_service import *
 from services.inventory_record_service import *
 from services.inventory_service import *
 from services.pre_order_service import *
+from services.work_order_service import *
 
 rebar = Rebar()
 registry = rebar.create_handler_registry(prefix='/v1')
@@ -29,6 +31,7 @@ def create_tables():
     create_inventory_record_table()
     create_recipe_table()
     create_preorder_table()
+    create_workorder_table() 
 
 # Client Endpoints
 @registry.handles(
@@ -189,6 +192,31 @@ def edit_parameters():
     if result.get("error"):
         return 500    
     return  201
+
+# Work-Order Endpoints
+@registry.handles(
+    rule='/client/<client_id>/work-orders', 
+    method='GET', 
+    response_body_schema=WorkOrderSchema(many=True)
+)
+def list_workorders(client_id):
+    results = get_client_workorders(client_id)
+    return results
+
+@registry.handles(
+    rule='/client/create-work-order', 
+    method='POST', 
+    request_body_schema=WorkOrderCreateSchema(),
+    response_body_schema=WorkOrderSchema()
+)
+def create_workorder():
+    body = rebar.validated_body
+    result = insert_workorder(body['preorder_id'], body['client_id'], body['code'], body['cartoning'], body['start_date'], body['operator'])
+    if result.get("error"):
+        return 500
+    
+    return  201
+
 
 # Pre-Order Endpoints
 @registry.handles(
